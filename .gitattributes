@@ -1,1 +1,0 @@
-journal.zip.lrz.enc filter=lfs diff=lfs merge=lfs -text
