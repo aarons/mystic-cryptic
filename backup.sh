@@ -2,8 +2,18 @@
 
 cd /Users/aaron/code/services/journal-backup
 
-# install lrzip
-brew install lrzip
+# check if the lrzip command is installed already
+if ! command -v lrzip &> /dev/null
+then
+    echo "installing lrzip"
+    brew install lrzip
+fi
+
+if ! command -v lrzip &> /dev/null
+then
+    echo "lrzip could not be found"
+    exit 1
+fi
 
 # first zip the ~/Documents/journal directory
 zip --display-counts --test --recurse-paths -0 journal.zip /Users/aaron/Documents/journal
@@ -44,6 +54,6 @@ fi
 git lfs track "journal.zip.lrz.enc"
 
 # commit and push the encrypted file to git repo, including date in commit message
-git add .
+git add journal.zip.lrz.enc
 git commit -m "journal backup $(date +%Y-%m-%d)"
 git push -u origin main

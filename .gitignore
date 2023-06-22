@@ -163,3 +163,16 @@ cython_debug/
 .DS_Store
 .AppleDouble
 .LSOverride
+
+
+# temp files
+journal.zip
+journal.zip.lrz
+
+# Mac
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# logs
+backup-log.txt
