@@ -13,14 +13,20 @@ select yn in "Keep using .env variable" "Use the last git commit value instead";
             break;;
         "Use the last git commit value instead" )
             unset IV
-            IV = $(git log -1 --oneline -- journal.zip.lrz.enc | cut -d " " -f 2-)
+            IV=$(git log -1 --oneline -- journal.zip.lrz.enc | cut -d " " -f 2-)
             break;;
     esac
 done
 
+# check if the IV variable is empty
+if [ -z "$IV" ]; then
+    echo "IV variable is empty and it shouuuuldn't be"
+    exit 1
+fi
 echo "Using IV: $IV"
 
 # decrypt the file using aes-256-cbc
+echo "Decrypting journal.zip.lrz.enc..."
 openssl enc -aes-256-cbc -d -iv $IV -in journal.zip.lrz.enc -out journal.zip.lrz -pass pass:$JOURNAL_ENCRYPTION_KEY
 
 # try to decompress the file using lrzip
@@ -33,9 +39,7 @@ if [ ! -f journal.zip ]; then
 fi
 
 # move the zip to the documents directory
-echo "Moving journal.zip to ~/Documents"
-echo "Absolute paths were used, so it will decompress to Users/aaron/Documents/journal, starting from the directory it's run in"
+echo "journal.zip will decompress to Users/aaron/Documents/journal, starting from the directory it's run in"
+echo "--> Moving journal.zip to ~/Documents <--"
 mv journal.zip ~/Documents
-
-echo "removing temp journal.zip.lrz file"
 rm journal.zip.lrz
