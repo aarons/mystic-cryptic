@@ -36,8 +36,11 @@ fi
 # load the passkey variable from .env file
 source .env
 
+# assign random IV to variable
+IV=$(head -c 8 /dev/urandom | xxd -p)
+
 # then encrypt the file using aes-256-cbc
-openssl enc -aes-256-cbc -in journal.zip.lrz -out journal.zip.lrz.enc -pass pass:$JOURNAL_ENCRYPTION_KEY
+openssl enc -aes-256-cbc -iv $IV -in journal.zip.lrz -out journal.zip.lrz.enc -pass pass:$JOURNAL_ENCRYPTION_KEY
 
 # remove the unencrypted zip files
 rm journal.zip
@@ -53,7 +56,10 @@ fi
 # make sure the file is tracked by git lfs
 git lfs track "journal.zip.lrz.enc"
 
-# commit and push the encrypted file to git repo, including date in commit message
+# update the IV variable with the latest iv value in the existing .env file
+sed -i '' "s/IV=.*/IV=$IV/" .env
+
+# commit and push the encrypted file to git repo, including IV in commit message
 git add journal.zip.lrz.enc
-git commit -m "journal backup $(date +%Y-%m-%d)"
+git commit -m "$IV"
 git push -u origin main
