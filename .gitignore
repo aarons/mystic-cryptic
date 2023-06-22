@@ -165,7 +165,7 @@ cython_debug/
 .LSOverride
 
 
-# temp files
+# temp unencrypted files
 journal.zip
 journal.zip.lrz
 
