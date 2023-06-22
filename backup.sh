@@ -76,3 +76,8 @@ fi
 git add journal.zip.lrz.enc
 git commit -m "$IV"
 git push -u origin main
+
+echo "copying to icloud drive"
+# copy the encrypted file to icloud drive and save the IV to a separate file
+cp journal.zip.lrz.enc /Users/aaron/Library/Mobile\ Documents/com~apple~CloudDocs/backups/journal.zip.lrz.enc
+echo $IV > /Users/aaron/Library/Mobile\ Documents/com~apple~CloudDocs/backups/journal.zip.lrz.enc.iv
