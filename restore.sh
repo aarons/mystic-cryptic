@@ -33,8 +33,9 @@ if [ ! -f journal.zip ]; then
 fi
 
 # move the zip to the documents directory
-echo "Moving journal.zip to ~/Documents/journal"
-mv journal.zip ~/Documents/journal
+echo "Moving journal.zip to ~/Documents"
+echo "Absolute paths were used, so it will decompress to Users/aaron/Documents/journal, starting from the directory it's run in"
+mv journal.zip ~/Documents
 
 echo "removing temp journal.zip.lrz file"
 rm journal.zip.lrz
