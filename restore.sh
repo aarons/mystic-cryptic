@@ -40,6 +40,6 @@ fi
 
 # move the zip to the documents directory
 echo "journal.zip will decompress to Users/aaron/Documents/journal, starting from the directory it's run in"
-echo "--> Moving journal.zip to ~/Documents <--"
-mv journal.zip ~/Documents
+echo "--> Moving journal.zip to /Users/aaron/Documents <--"
+mv journal.zip /Users/aaron/Documents
 rm journal.zip.lrz
