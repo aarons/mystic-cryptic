@@ -168,6 +168,7 @@ cython_debug/
 # temp unencrypted files
 journal.zip
 journal.zip.lrz
+journal.zip.lrz.enc
 
 # Mac
 .DS_Store

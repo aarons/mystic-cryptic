@@ -6,14 +6,15 @@ source .env
 
 # see if the user wants to use the remote git message for the IV
 echo "By default, this script uses the IV in .env"
-echo "Would you prefer to use the IV from the last git message instead? (y/n)"
-select yn in "Keep using .env variable" "Use the last git commit value instead"; do
+echo "Would you prefer to use the IV from iCloud instead? (y/n)"
+select yn in "Keep using .env variable" "Use the icloud value instead"; do
     case $yn in
         "Keep using .env variable" )
             break;;
-        "Use the last git commit value instead" )
+        "Use the icloud value instead" )
             unset IV
-            IV=$(git log -1 --oneline -- journal.zip.lrz.enc | cut -d " " -f 2-)
+            # IV=$(git log -1 --oneline -- journal.zip.lrz.enc | cut -d " " -f 2-)
+            source /Users/aaron/Library/Mobile\ Documents/com~apple~CloudDocs/backups/journal.zip.lrz.enc.iv
             break;;
     esac
 done

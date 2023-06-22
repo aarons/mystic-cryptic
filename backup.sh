@@ -16,11 +16,11 @@ then
 fi
 
 # check if git lfs is installed already
-if ! command -v git-lfs &> /dev/null
-then
-    echo "installing git-lfs"
-    brew install git-lfs
-fi
+# if ! command -v git-lfs &> /dev/null
+# then
+#     echo "installing git-lfs"
+#     brew install git-lfs
+# fi
 
 # first zip the ~/Documents/journal directory
 zip --display-counts --test --recurse-paths -0 journal.zip /Users/aaron/Documents/journal
@@ -58,26 +58,26 @@ rm journal.zip
 rm journal.zip.lrz
 
 # check if the filesize is greater than 2 gigabytes
-FILESIZE=$(stat -f%z "journal.zip.lrz.enc")
-if [ $FILESIZE -gt 2147483648 ]; then
-    echo "journal.zip.lrz.enc is greater than 2 gigabytes, need to break it up into smaller bits"
-    exit 1
-fi
+# FILESIZE=$(stat -f%z "journal.zip.lrz.enc")
+# if [ $FILESIZE -gt 2147483648 ]; then
+#     echo "journal.zip.lrz.enc is greater than 2 gigabytes, need to break it up into smaller bits"
+#     exit 1
+# fi
 
 # check that the encrypted journal is tracked by git lfs
 # grep -q: Runs the grep command silently (without any output), but returns an exit status of 0 if a match is found, and a non-zero status otherwise.
 # if ! grep ... line checks if the grep command did not find the pattern (exit status is non-zero).
 # If the command returns a non-zero exit status, the script proceeds to the git lfs track "journal.zip.lrz.enc" command, adding the file to Git LFS tracking.
-if ! grep -q "journal.zip.lrz.enc filter=lfs diff=lfs merge=lfs -text" .gitattributes; then
-    git lfs track "journal.zip.lrz.enc"
-fi
+# if ! grep -q "journal.zip.lrz.enc filter=lfs diff=lfs merge=lfs -text" .gitattributes; then
+#     git lfs track "journal.zip.lrz.enc"
+# fi
 
 # commit and push the encrypted file to git repo, including IV in commit message
-git add journal.zip.lrz.enc
-git commit -m "$IV"
-git push -u origin main
+# git add journal.zip.lrz.enc
+# git commit -m "$IV"
+# git push -u origin main
 
 echo "copying to icloud drive"
 # copy the encrypted file to icloud drive and save the IV to a separate file
 cp journal.zip.lrz.enc /Users/aaron/Library/Mobile\ Documents/com~apple~CloudDocs/backups/journal.zip.lrz.enc
-echo $IV > /Users/aaron/Library/Mobile\ Documents/com~apple~CloudDocs/backups/journal.zip.lrz.enc.iv
+echo IV=$IV > /Users/aaron/Library/Mobile\ Documents/com~apple~CloudDocs/backups/journal.zip.lrz.enc.iv
