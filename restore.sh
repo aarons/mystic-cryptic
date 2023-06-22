@@ -9,18 +9,19 @@ echo "By default, this script uses the IV in .env"
 echo "Would you prefer to use the IV from the last git message instead? (y/n)"
 select yn in "Keep using .env variable" "Use the last git commit value instead"; do
     case $yn in
-        Yes ) 
+        "Keep using .env variable" )
             break;;
-        No ) 
+        "Use the last git commit value instead" )
             unset IV
             IV = $(git log -1 --oneline -- journal.zip.lrz.enc | cut -d " " -f 2-)
             break;;
     esac
 done
 
+echo "Using IV: $IV"
+
 # decrypt the file using aes-256-cbc
-#openssl enc -aes-256-cbc -d -iv $IV -in journal.zip.lrz.enc -out journal.zip.lrz -pass pass:$JOURNAL_ENCRYPTION_KEY
-openssl enc -aes-256-cbc -d -in journal.zip.lrz.enc -out journal.zip.lrz -pass pass:$JOURNAL_ENCRYPTION_KEY
+openssl enc -aes-256-cbc -d -iv $IV -in journal.zip.lrz.enc -out journal.zip.lrz -pass pass:$JOURNAL_ENCRYPTION_KEY
 
 # try to decompress the file using lrzip
 lrzip -d journal.zip.lrz
@@ -37,4 +38,3 @@ mv journal.zip ~/Documents/journal
 
 echo "removing temp journal.zip.lrz file"
 rm journal.zip.lrz
-
