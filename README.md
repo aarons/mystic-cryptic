@@ -20,12 +20,12 @@ I wanted a few different things:
 ## Installation
 
 1. Clone this repository to your local machine.
-1. Copy the `.env.example` file to `.env` and set the `ENCRYPTION_KEY` environment variable to a random string of 32 characters.
+1. Copy the `.env.example` file to `.env` and set the `ENCRYPTION_KEY` environment variable to a random string
 1. Save your encryption string somewhere where you won't lose it. You will need it to restore backups.
 1. Install `lrzip` (on mac osx: `brew install lrzip`)
 1. Run `./backup.sh` to see detailed usage notes.
 
-The other dependencies (`zip` and `openssl` are installed by default on a mac).
+The other dependencies (`zip` and `openssl` are included by default on a mac).
 
 ## Example Usage
 
@@ -55,7 +55,7 @@ This command will create an encrypted backup named:
 
 ## Decrypting
 
-The restore.sh script is used to decrypt and decompress a backup file.
+The restore.sh script decrypts and decompresses a backup file.
 
 ### Example Usage
 
@@ -77,6 +77,6 @@ Contributions are welcome!
 The [issues tab](https://github.com/aarons/mystic-cryptic/issues) has enhancement ideas and bugs. Please use that to raise any new issues, or to look for ideas on ways to contribute. 
 
 For PRs, please include:
-- the problem you're solving as well as a link to the issue it resolves
+- the problem you're solving, as well as a link to the issue it resolves
 - an explanation of your implementation
 - details of how you tested your solution
