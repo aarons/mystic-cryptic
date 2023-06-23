@@ -63,16 +63,10 @@ Usage:
 This command will take `/path/to/files.zip.lrz.enc.12345678`, decrypt it using the ENCRYPTION_KEY environment variable, and decompress it to `/where/to/put/backup/files.zip`. The original encrypted file is retained in case of problems with the ENCRYPTION KEY.
 
 
-## Planned features
+## Features & Bugs
 
-The issues section is a good place to see what's needed for this project:
+The issues section is a good place to discuss ideas and see what's needed:
 - https://github.com/aarons/journal-backup/issues
-
-Additional features ideas:
-- need a better scheduling mechanism than the users crontab. Since this is primarily targetted for mac use, it would be nice to have a launchd plist file that could be installed and call this program, and the list of backups could be stored somewhere (maybe the plist file, or a separate file in application support).
-- would be nice to install as a brew package / binary
-- would be nice to have a simple GUI for scheduling and restoring backups
-
 
 ## Contributing
 
