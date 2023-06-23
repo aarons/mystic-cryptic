@@ -10,9 +10,12 @@ It keeps the latest backup of a particular folder, removing older backups to con
 
 **Why make this backup program?**
 
-- I wanted a backup program that would also encrypt things and the freedom to select the encryption and compression algorithms. 
-- I wanted to experiment with the best encryption and compression algorithms reasonably accessible.
-- I thought it would be interesting to do this all in bash/shell, using readily available libraries (slightly works against exploring new compression algorithms).
+I wanted a few different things:
+
+- A backup program that would compress and encrypt things
+- The freedom to select the compression and encryption algorithms
+- The ability to experiment with the best compression and encryption algorithms
+- To do all this in bash/shell (slightly works against exploring new algorithms, but I'm ok with that for now)
 
 ## Installation
 
