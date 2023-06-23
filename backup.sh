@@ -12,15 +12,19 @@ echo "It only keeps the latest backup around, previous ones are removed to save 
 dir_path=""
 output_path=""
 hour=""
+file_size_limit=""
 
 # take a directory parameter (-d) as the directory to backup
 # -o for the output location
 # -h optionally for a time of day to run the backup regularly
-while getopts ":d:o:h:" opt; do
+# -l optionally specify a file size limit
+
+while getopts ":d:o:h:l:" opt; do
   case $opt in
   d) dir_path="$OPTARG" ;;
   o) output_path="$OPTARG" ;;
   h) backup_hour="$OPTARG" ;;
+  l) file_size_limit=$OPTARG ;;
   \?)
     # this is for when an unknown option is provided.
     echo "Invalid option: -$OPTARG" >&2
@@ -28,8 +32,9 @@ while getopts ":d:o:h:" opt; do
     echo "-d for the directory to backup (required)"
     echo "-o for the output directory. The filename is created automatically (required)"
     echo "-h for an optional hour of day to run the backup regularly, use 0-23 for the hour (optional)"
-    echo "example: backup -d /path/to/files -o /where/to/put/backup -h 22"
-    echo "this will created an encrypted backup named path_to_files.zip.lrc.enc.<random 8 hex IV> in /where/to/put/backup"
+    echo "-l for an optional file size limit in KB, files over this size will be excluded from the backup (optional)"
+    echo "example: backup -d /path/to/files -o /where/to/put/backup -h 22 -l 100000k"
+    echo "this will created an encrypted backup named path_to_files.zip.lrc.enc.<random 8 hex IV> in /where/to/put/backup, and filter out files over 100mb (100000k)"
     exit 1
     ;;
   :)
@@ -68,8 +73,9 @@ fi
 
 # create the output filename by using the directory name
 file_name=${dir_path#/} # remove leading slash if present
-file_name=$(echo "$file_name" | tr '/' '-')
-file_name=$(echo "$file_name" | tr '[:upper:]' '[:lower:]') # replace slashes with dashes, and make lowercase
+file_name=${file_name%/} # remove trailing slash if present
+file_name=$(echo "$file_name" | sed 's/[^[:alnum:]]/-/g') # replace non-alphanumeric characters with dashes
+file_name=$(echo "$file_name" | tr '[:upper:]' '[:lower:]') # make file name lowercase
 
 # make sure work is done in the temp directory
 log "backing up: $dir_path"
@@ -87,15 +93,38 @@ if [ -z "$ENCRYPTION_KEY" ]; then
   exit 1
 fi
 
-# first zip the directory
 cd $(pwd)/temp
-zip --quiet --test --recurse-paths -0 $file_name $dir_path
+zip_arguments="--quiet --test --recurse-paths -0 $file_name \"$dir_path\""
 
-# stop if there was an issue creating the file
+# check if file size limit was specified
+if [ ! -z "$file_size_limit" ]; then
+  log "file size limit specified, will exclude files over $file_size_limit"
+  find "$dir_path" -type f -size +$file_size_limit > $filename.exclusions.txt
+
+  log "Here's the list of excluded files:"
+  cat $filename.exclusions.txt | while read line; do
+    log "$line"
+  done
+  zip_arguments="$zip_arguments -x@$filename.exclusions.txt"
+fi
+
+# zip the directory
+log "running zip with: zip $zip_arguments"
+log "temporary output file is $file_name.zip"
+eval zip $zip_arguments
+
+# remove exclusions file if it exists
+if [ -f $filename.exclusions.txt ]; then
+  rm $filename.exclusions.txt
+fi
+
+# stop if there was an issue creating the zip file
 if [ ! -f $file_name.zip ]; then
   log "$file_name.zip does not exist, something went wrong at the zip stage"
   exit 1
 fi
+
+log "lrzip running next:"
 
 # use lrzip to compress the zip file
 # -L 9 is the highest compression level
@@ -173,6 +202,12 @@ schedule_cronjob() {
 
   # check if journal-backup/backup.sh is already added to the crontab
   cron_str="0 $backup_hour * * * cd $base_path && ./$script_name -d \"$dir_path\" -o \"$output_path\""
+
+  # check if file_size_limit is specified and add to cron_str if so
+  if [ ! -z "$file_size_limit" ]; then
+    cron_str="$cron_str -l $file_size_limit"
+  fi
+
   log "checking if crontab has: $cron_str"
   if crontab -l | grep -q -F "$cron_str"; then
     log "\nbackup.sh is already scheduled"
