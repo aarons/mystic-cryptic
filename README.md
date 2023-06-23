@@ -1,5 +1,7 @@
 # Backup and Encrypt Script
 
+**This project is in development; while it works, there are some issues with the scheduling module.**
+
 This script provides three main functions:
 
 1. creating a compressed and encrypted backup of a specified directory
