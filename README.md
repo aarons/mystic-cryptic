@@ -60,20 +60,20 @@ The restore.sh script is used to decrypt and decompress a backup file.
 ./restore.sh -f /path/to/files.zip.lrz.enc.12345678 -o /where/to/put/decrypted-backup
 ```
 
-This command will take `/path/to/files.zip.lrz.enc.12345678`, decrypt it using the ENCRYPTION_KEY environment variable, and decompress it to `/where/to/put/backup/files.zip`. The original encrypted file is retained in case of problems with the ENCRYPTION KEY.
+This command will take `/path/to/files.zip.lrz.enc.12345678`, decrypt it using the ENCRYPTION_KEY environment variable, and `lrzip` decompress it to `/where/to/put/decrypted-backup/files.zip`. The original encrypted file is retained in case of problems with the ENCRYPTION KEY. The zip file is left un-expanded, allowing the user to relocate it as needed.
 
 ### Parameter Details
 
 - -f: The file to decrypt and decompress (required).
 - -o: The output directory. The filename is restored with the original filename (required).
 
-## Issues
+## Contributing
+
+Contributions are welcome!
 
 The [issues tab](https://github.com/aarons/mystic-cryptic/issues) has enhancement ideas and bugs. Please use that to raise any new issues, or to look for ideas on ways to contribute. 
 
-## Contributing
-
-Contributions are welcome! For PRs, please include:
+For PRs, please include:
 - the problem you're solving as well as a link to the issue it resolves
 - an explanation of your implementation
 - details of how you tested your solution
