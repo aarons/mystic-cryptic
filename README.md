@@ -1,22 +1,18 @@
 # Backup and Encrypt Script
 
-**This project is in development; while it works, there are some issues with the scheduling module.**
+This program provides three main functions:
 
-This script provides three main functions:
-
-1. creating a compressed and encrypted backup of a specified directory
-1. scheduling backups on a recurring basis for automated backup management (needs work)
-1. restoring backups as needed
+1. creates a compressed and encrypted backup of a specified directory
+1. schedules backups on a recurring basis for automated backup management using cron
+1. restores backups as needed
 
 It keeps the latest backup of a particular folder, removing older backups to conserve storage space.
 
-## Why this backup script?
+**Why make this backup program?**
 
-- I wanted a backup program that would also encrypt things, and thought it would be fun to write one.
-- Performance wasn't a concern, so I thought it would be fun to experiment with the best encryption and compression reasonably accessible.
-- Also I thought it would be interesting to see if this could all be done in bash/shell, using readily available libraries (slightly works against exploring new compression algorithms).
-- It was fun to learn about encryption and compression algorithm options.
-
+- I wanted a backup program that would also encrypt things, and I thought writing one could be fun.
+- I wanted to experiment with the best encryption and compression algorithms reasonably accessible.
+- I thought it would be interesting to do this all in bash/shell, using readily available libraries (slightly works against exploring new compression algorithms).
 
 ## Installation
 
@@ -28,49 +24,56 @@ It keeps the latest backup of a particular folder, removing older backups to con
 
 The other dependencies (`zip` and `openssl` are installed by default on a mac).
 
-## Usage
+## Example Usage
+
+Reference:
+`backup -d [/path/to/files] -o [/where/to/put/backup] -h [hour to repeat] [-l size limit]`
 
 ```bash
-backup -d /path/to/files -o /where/to/put/backup [-h HOUR]
+# a one time backup:
+backup -d /Users/bae/Documents -o /Volumes/bae-back-that-up/
+
+# a backup scheduled to re-occur at the 22nd hour of the day:
 backup -d /Users/bae/Documents -o /Volumes/bae-back-that-up/ -h 22
+
+# a backup that also filters out files larger than 100k
+backup -d /Users/bae/Documents -o /Volumes/bae-back-that-up/ -h 22 -l 100k
 ```
 
 This command will create an encrypted backup named:
 `users_bae_documents.zip.lrz.enc.<8 hex>` in `/Volumes/bae-back-that-up/`.
 
-### Parameters
+### Parameter Details
 
-- -d: The directory to backup.
-- -o: The output location. The file will be named automatically.
+- -d: The directory to backup (required).
+- -o: The output location. The file will be named automatically (required).
 - -h: An optional hour of the day (0-23) to schedule the backup to run (optional).
-
+- -l: Limits the size of files that will be included in the backup (optional).
 
 ## Decrypting
 
 The restore.sh script is used to decrypt and decompress a backup file.
 
-Usage:
+### Example Usage
 
 ```bash
 ./restore.sh -f /path/to/files.zip.lrz.enc.12345678 -o /where/to/put/decrypted-backup
 ```
 
-### Parameters:
+This command will take `/path/to/files.zip.lrz.enc.12345678`, decrypt it using the ENCRYPTION_KEY environment variable, and decompress it to `/where/to/put/backup/files.zip`. The original encrypted file is retained in case of problems with the ENCRYPTION KEY.
+
+### Parameter Details
 
 - -f: The file to decrypt and decompress (required).
 - -o: The output directory. The filename is restored with the original filename (required).
 
-This command will take `/path/to/files.zip.lrz.enc.12345678`, decrypt it using the ENCRYPTION_KEY environment variable, and decompress it to `/where/to/put/backup/files.zip`. The original encrypted file is retained in case of problems with the ENCRYPTION KEY.
+## Issues
 
-
-## Features & Bugs
-
-The issues section is a good place to discuss ideas and see what's needed:
-- https://github.com/aarons/journal-backup/issues
+The [issues tab](https://github.com/aarons/mystic-cryptic/issues) has enhancement ideas and bugs. Please use that to raise any new issues, or to look for ideas on ways to contribute. 
 
 ## Contributing
 
 Contributions are welcome! For PRs, please include:
-- a description of the problem you're solving or new feature you are adding
-- a description of your solution
-- a description for how you tested your solution
+- the problem you're solving as well as a link to the issue it resolves
+- an explanation of your implementation
+- details of how you tested your solution
