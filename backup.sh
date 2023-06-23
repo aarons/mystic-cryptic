@@ -73,8 +73,9 @@ fi
 
 # create the output filename by using the directory name
 file_name=${dir_path#/} # remove leading slash if present
-file_name=$(echo "$file_name" | tr '/' '-')
-file_name=$(echo "$file_name" | tr '[:upper:]' '[:lower:]') # replace slashes with dashes, and make lowercase
+file_name=${file_name%/} # remove trailing slash if present
+file_name=$(echo "$file_name" | sed 's/[^[:alnum:]]/-/g') # replace non-alphanumeric characters with dashes
+file_name=$(echo "$file_name" | tr '[:upper:]' '[:lower:]') # make file name lowercase
 
 # make sure work is done in the temp directory
 log "backing up: $dir_path"
@@ -93,7 +94,7 @@ if [ -z "$ENCRYPTION_KEY" ]; then
 fi
 
 cd $(pwd)/temp
-zip_arguments="--quiet --test --recurse-paths -0 $file_name $dir_path"
+zip_arguments="--quiet --test --recurse-paths -0 $file_name \"$dir_path\""
 
 # check if file size limit was specified
 if [ ! -z "$file_size_limit" ]; then
@@ -108,8 +109,9 @@ if [ ! -z "$file_size_limit" ]; then
 fi
 
 # zip the directory
-log "running zip, temporary output file is $file_name.zip"
-zip $zip_arguments
+log "running zip with: zip $zip_arguments"
+log "temporary output file is $file_name.zip"
+eval zip $zip_arguments
 
 # remove exclusions file if it exists
 if [ -f $filename.exclusions.txt ]; then
