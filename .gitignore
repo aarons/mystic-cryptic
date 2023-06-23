@@ -176,9 +176,15 @@ journal.zip.lrz.enc
 .LSOverride
 
 # logs
-backup-log.txt
+
 
 # tests
 backup.enc
 backup-iv.enc
 decrypted*
+
+# temp directory contents
+temp/*
+logs/*
+backup-log.txt
+*.log
