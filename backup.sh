@@ -55,22 +55,6 @@ if [ -z "$output_path" ]; then
   exit 1
 fi
 
-# check if zip and lrzip is installed
-if ! command -v lrzip &>/dev/null; then
-  echo "This program relies on lrzip, please install before continuing."
-  echo "Suggest running: 'brew install lrzip' if you are on a mac"
-  echo "homebrew can be install by running: /bin/bash -c \"$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)\""
-  exit 1
-fi
-
-# check if zip and lrzip is installed
-if ! command -v zip &>/dev/null; then
-  echo "This program relies on zip, please install before continuing."
-  echo "This is normally included with a mac, not sure how you get to this point..."
-  echo "Please be sure zip is available in your shell path (maybe check the output of 'echo \$PATH', and your bash profile in one of these files: .bashrc, .zshrc, .bash_profile, or .zprofile)"
-  exit 1
-fi
-
 # create the output filename by using the directory name
 file_name=${dir_path#/} # remove leading slash if present
 file_name=${file_name%/} # remove trailing slash if present
