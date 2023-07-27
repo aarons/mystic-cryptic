@@ -37,7 +37,7 @@ We use GitHub issues to track public bugs and feature requests. Please ensure yo
 
 ## License
 
-By contributing, you agree that your contributions will be licensed under its MIT License.
+By contributing, you agree that your contributions belong to the original author of this repository.
 
 ## Final Note
 
