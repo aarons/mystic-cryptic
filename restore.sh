@@ -38,6 +38,15 @@ if [ -z "$output_dir" ]; then
   exit 1
 fi
 
+# check that the output dir exists
+if [ ! -d "$output_dir" ]; then
+  echo "Output directory does not exist: $output_dir, creating:" >&2
+  mkdir -p "$output_dir"
+fi
+
+# ensure that output_dir does not end with a '/'
+output_dir=${output_dir%/}
+
 # get the filename from the full path
 filename=$(basename "$full_path")
 
@@ -73,7 +82,7 @@ echo "Using IV: $IV"
 # Decrypt the file using aes-256-cbc
 decrypted_full_path="${output_dir}/${base_filename}.zip.lrz"
 
-openssl enc -aes-256-cbc -d -iv $IV -in "$full_path" -out "$decrypted_full_path" -pass pass:"$ENCRYPTION_KEY"
+openssl enc -aes-256-cbc -d -iv $IV -in "$full_path" -out "$decrypted_full_path" -pass pass:"$ENCRYPTION_KEY" -pbkdf2 -iter 10
 
 # Decompress the file using lrzip
 lrzip -d "${decrypted_full_path}" -o "${output_dir}/${base_filename}.zip"

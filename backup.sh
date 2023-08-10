@@ -71,6 +71,9 @@ if ! command -v zip &>/dev/null; then
   exit 1
 fi
 
+# ensure that dir_path does not end with a '/'
+dir_path=${dir_path%/}
+
 # create the output filename by using the directory name
 file_name=${dir_path#/} # remove leading slash if present
 file_name=${file_name%/} # remove trailing slash if present
@@ -91,6 +94,11 @@ if [ -z "$ENCRYPTION_KEY" ]; then
   log "Please add ENCRYPTION_KEY='your encryption key' to the .env file"
   log "Be sure to save the key somewhere safe as the files won't be recoverable without it"
   exit 1
+fi
+
+# check if the temp directory needs to be created
+if [ ! -d "$(pwd)/temp" ]; then
+  mkdir "temp"
 fi
 
 cd $(pwd)/temp
@@ -141,11 +149,11 @@ if [ ! -f $file_name.zip.lrz ]; then
   exit 1
 fi
 
-# assign random IV to variable
-IV=$(head -c 8 /dev/urandom | xxd -p)
+# assign random IV to variable (16 bytes)
+IV=$(head -c 16 /dev/urandom | xxd -p)
 
-# then encrypt the file using aes-256-cbc
-openssl enc -aes-256-cbc -iv $IV -in $file_name.zip.lrz -out $file_name.zip.lrz.enc.$IV -pass pass:$ENCRYPTION_KEY
+# then encrypt the file using aes-256-cbc with pbkdf2
+openssl enc -aes-256-cbc -iv $IV -in $file_name.zip.lrz -out $file_name.zip.lrz.enc.$IV -pass pass:$ENCRYPTION_KEY -pbkdf2 -iter 10
 
 # check if the file was created
 if [ ! -f $file_name.zip.lrz.enc.$IV ]; then
@@ -252,6 +260,12 @@ if [ ! -z "$backup_hour" ] && [ "$backup_hour" -eq "$backup_hour" ] 2>/dev/null 
   schedule_cronjob
 else
   log "\nNo backup hour provided, not scheduling a regular backup"
+fi
+
+# check if logs/log.txt exists, and create it if not
+if [ ! -f "logs/log.txt" ]; then
+  mkdir "logs"
+  touch "logs/log.txt"
 fi
 
 # trim the logfile if its gotten really long
